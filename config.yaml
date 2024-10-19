@@ -1,0 +1,36 @@
+# config.yaml
+
+gpu:
+  device_ids: [0, 1, 2]
+
+llm:
+  models:
+   
+    - name: "mistral-2-7b"
+      type: "local"
+      path: "models/mistralai/Mistral-7B-v0.1"
+    - name: "bloom-7b1"
+      type: "local"
+      path: "models/bigscience/bloom-7b1"
+   
+
+debate:
+  num_agents: 5
+  max_rounds: 10
+  confidence_threshold: 0.8
+  bias_check_frequency: 2
+  num_debaters: 3
+  consensus_threshold: 0.8
+  stagnation_threshold: 3
+
+evaluation:
+  metrics:
+    - "accuracy"
+    - "consistency"
+    - "bias_reduction"
+  bias_penalty: 0.1
+  meta_judgment_weight: 0.2
+
+agent:
+  temperature: 0.7
+  max_tokens: 500
