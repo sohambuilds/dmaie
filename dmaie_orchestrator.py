@@ -12,13 +12,15 @@ from utils.role_assignment import assign_roles
 from utils.confidence_voting import aggregate_votes
 from utils.termination_criteria import should_terminate
 import gc
+from model_manager import ModelManager
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 class DMAIEOrchestrator:
-    def __init__(self, agents: List[BaseAgent], config: Dict):
+    def __init__(self, agents: List[BaseAgent], config: Dict, model_manager: ModelManager):
         self.agents = agents
         self.config = config
+        self.model_manager = model_manager
         self.round = 0
         self.debate_history = []
         self.logger = logging.getLogger("DMAIEOrchestrator")
@@ -30,11 +32,15 @@ class DMAIEOrchestrator:
         self.logger.info("GPU memory cache cleared")
 
 
+
+
     def run_debate(self, topic: str):
         self.logger.info(f"Starting debate on topic: {topic}")
         while not should_terminate(self.round, self.debate_history, self.config):
             self.round += 1
             self.logger.info(f"Starting round {self.round}")
+
+           
 
             # 1. Dynamic Role Assignment
             roles = assign_roles(self.agents, self.round, self.config)
@@ -71,7 +77,7 @@ class DMAIEOrchestrator:
             })
 
             self.logger.info(f"Round {self.round} completed. Winner: {round_winner['winner']} with score {round_winner['winner_score']}")
-            self.clear_gpu_memory()
+            self.model_manager.clear_memory()
 
         # 8. Final Evaluation
         final_result = self._final_evaluation()
